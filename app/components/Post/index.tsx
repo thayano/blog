@@ -17,7 +17,7 @@ export const Post = ({ activeNewPost }: any) => {
     setPosts(reversedPosts);
   }
 
-  const updateLike = async (postId, likeCount) => {
+  const updateLike = async (postId: any, likeCount: any) => {
     const like = Number(likeCount) + 1;
     try {
       const response = await axios.put("/api/posts", {
@@ -29,7 +29,7 @@ export const Post = ({ activeNewPost }: any) => {
     }
   };
 
-  const updateDislike = async (postId, likeCount) => {
+  const updateDislike = async (postId: any, likeCount: any) => {
     const like = Number(likeCount) + 1;
     try {
       const response = await axios.put("/api/posts", {

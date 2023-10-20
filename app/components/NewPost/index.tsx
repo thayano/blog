@@ -13,14 +13,14 @@ type Inputs = {
 };
 
 type UploadResult = {
-  info: {
-    public_id: string;
+  info?: {
+    public_id?: string;
   };
-  event: "success";
+  event?: "success";
 };
 
 export const NewPost = ({ activeNewPost }: any) => {
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState('');
   const date = () => new Date().toDateString();
   const {
     register,
@@ -43,7 +43,7 @@ export const NewPost = ({ activeNewPost }: any) => {
       },
     });
     if (response.ok) {
-      activeNewPost()
+      activeNewPost();
     } else {
       console.error("Erro ao salvar a postagem.");
     }
@@ -100,14 +100,17 @@ export const NewPost = ({ activeNewPost }: any) => {
                 </p>
                 <div className="flex justify-center">
                   <CldUploadWidget
-                    onUpload={(result: UploadResult) => {
-                      setImage(result.info.public_id);
+                    onUpload={(result) => {
+                      const uploadResult = result as UploadResult;
+                      if (uploadResult.info && uploadResult.info.public_id) {
+                        setImage(uploadResult?.info?.public_id);
+                      }
                     }}
                     uploadPreset="zvadtlxq"
                   >
                     {({ open }) => {
-                      function handleOnClick(e) {
-                        e.preventDefault();
+                      function handleOnClick(event: any) {
+                        event.preventDefault();
                         open();
                       }
                       return (
@@ -143,7 +146,8 @@ export const NewPost = ({ activeNewPost }: any) => {
                   </button>
                   <button
                     className="bg-green-900 hover:bg-green-600  px-8 py-2 rounded-md"
-                    type="submit">
+                    type="submit"
+                  >
                     <span className="font-bold">Criar Post</span>
                   </button>
                 </div>

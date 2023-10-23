@@ -1,10 +1,14 @@
 "use client";
 
+import { format } from "date-fns";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { CldImage } from "next-cloudinary";
 
 export const Post = ({ activeNewPost }: any) => {
+  const [likes, setLikes] = useState<{
+    [key: string]: { likes: number; dislikes: number };
+  }>({});
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -15,35 +19,49 @@ export const Post = ({ activeNewPost }: any) => {
     const response = await axios.get("/api/posts/");
     const reversedPosts = response.data.reverse();
     setPosts(reversedPosts);
+
+    const newLikes = reversedPosts.reduce((acc: any, item: any) => {
+      acc[item.serial] = {
+        likes: item.likes,
+        dislikes: item.dislikes,
+      };
+      return acc;
+    }, {});
+
+    setLikes(newLikes);
   }
 
-  const updateLike = async (postId: any, likeCount: any) => {
-    const like = Number(likeCount) + 1;
+  const updateLike = async (postSerial: string) => {
+    const updatedLikes = { ...likes };
+    updatedLikes[postSerial].likes += 1;
+    setLikes(updatedLikes);
     try {
       const response = await axios.put("/api/posts", {
-        serial: postId,
-        like,
+        serial: postSerial,
+        likes: likes[postSerial].likes,
       });
     } catch (error) {
       console.error("Erro ao atualizar os likes:", error);
     }
   };
 
-  const updateDislike = async (postId: any, likeCount: any) => {
-    const like = Number(likeCount) + 1;
+  const updateDislike = async (postSerial: string) => {
+    const updatedDislikes = { ...likes };
+    updatedDislikes[postSerial].dislikes += 1;
+    setLikes(updatedDislikes);
     try {
       const response = await axios.put("/api/posts", {
-        serial: postId,
-        like,
+        serial: postSerial,
+        dislikes: likes[postSerial].dislikes,
       });
     } catch (error) {
-      console.error("Erro ao atualizar os dislikes:", error);
+      console.error("Erro ao atualizar os likes:", error);
     }
   };
 
   return (
     <main className="mx-auto w-3/5 min-h-max mb-8">
-      <div className="py-8  flex justify-end">
+      <div className="py-4 flex justify-end">
         <button
           className="bg-green-900 hover:bg-green-600 px-8 py-2 rounded-md"
           type="button"
@@ -65,7 +83,9 @@ export const Post = ({ activeNewPost }: any) => {
               </div>
             </div>
             <div>
-              <span className="text-gray-500">{item.createdAt}</span>
+              <span className="text-gray-500">
+                {format(new Date(item.createdAt), "dd/MM/yyyy")}
+              </span>
             </div>
           </div>
           <br />
@@ -93,35 +113,37 @@ export const Post = ({ activeNewPost }: any) => {
           </div>
           <div className="mt-8 text-gray-500 flex">
             <div>
-              <button 
+              <button
                 className="flex gap-2 items-center hover:text-green-500 hover:bg-neutral-800 ms-6 px-2 rounded-md"
                 type="button"
-                value={item.likes}
-                onClick={() => updateLike(item.serial, item.likes)}>
+                onClick={() => updateLike(item.serial)}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="1em"
                   viewBox="0 0 384 512"
-                  fill="white">
+                  fill="white"
+                >
                   <path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z" />
                 </svg>
-                {item.likes}
+                {likes[item.serial].likes}
               </button>
             </div>
             <div className="">
-              <button 
+              <button
                 className="flex gap-2 items-center hover:text-red-500 hover:bg-neutral-800 ms-6 px-2 rounded-md"
                 type="button"
-                value={item.dislikes}
-                onClick={() => updateDislike(item.serial, item.dislikes)}>
+                onClick={() => updateDislike(item.serial)}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="1em"
                   viewBox="0 0 384 512"
-                  fill="white">
+                  fill="white"
+                >
                   <path d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z" />
                 </svg>
-                {item.dislikes}
+                {likes[item.serial].dislikes}
               </button>
             </div>
           </div>

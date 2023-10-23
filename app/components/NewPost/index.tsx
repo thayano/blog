@@ -1,5 +1,6 @@
 "use client";
 
+import { format } from "date-fns";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { CldImage } from "next-cloudinary";
@@ -55,7 +56,7 @@ export const NewPost = ({ activeNewPost }: any) => {
         <div className="bg-neutral-900 px-8 py-8 rounded-2xl">
           <div className="flex justify-between">
             <div>
-              <span className="text-gray-500">{date()}</span>
+              <span className="text-gray-500">{format(new Date(date()), "dd/MM/yyyy")}</span>
             </div>
           </div>
           <br />
@@ -66,7 +67,7 @@ export const NewPost = ({ activeNewPost }: any) => {
                   <div className="mb-4 text-sm font-bold w-[48%]">
                     <label>Nome</label>
                     <input
-                      {...register("author")}
+                      {...register("author", { required: true })}
                       className="mt-2 placeholder:italic placeholder:text-slate-400 block bg-neutral-900 w-full border border-neutral-800 rounded-md px-4 py-2 pr-3 shadow-sm focus:outline-none focus:border-neutral-500 focus:ring-neutral-500 focus:ring-1 sm:text-md"
                       placeholder="Fulano da Silva"
                       type="text"
@@ -75,7 +76,7 @@ export const NewPost = ({ activeNewPost }: any) => {
                   <div className="mb-4 text-sm font-bold w-[48%]">
                     <label>Cargo</label>
                     <input
-                      {...register("profile")}
+                      {...register("profile", { required: true })}
                       className="mt-2 placeholder:italic placeholder:text-slate-400 block bg-neutral-900 w-full border border-neutral-800 rounded-md px-4 py-2 pr-3 shadow-sm focus:outline-none focus:border-neutral-500 focus:ring-neutral-500 focus:ring-1 sm:text-md"
                       placeholder="Coach do Elon Musk"
                       type="text"
@@ -85,7 +86,7 @@ export const NewPost = ({ activeNewPost }: any) => {
 
                 <div className="mb-4 mt-20 text-4xl	font-bold ">
                   <input
-                    {...register("title")}
+                    {...register("title", { required: true })}
                     className="placeholder:italic  text-center placeholder:text-slate-400 block bg-neutral-900 w-full border border-neutral-900 rounded-md px-4 py-2 pr-3 shadow-sm focus:outline-none focus:border-neutral-500 focus:ring-neutral-500 focus:ring-1 sm:text-md"
                     placeholder="Titulo..."
                     type="text"
@@ -93,7 +94,7 @@ export const NewPost = ({ activeNewPost }: any) => {
                 </div>
                 <p className="mb-4 text-gray-300 text-md mt-8">
                   <textarea
-                    {...register("content")}
+                    {...register("content", { required: true })}
                     className="placeholder:italic placeholder:text-slate-400 block bg-neutral-900 w-full border border-neutral-800 rounded-md py-2 px-4 pr-3 h-24 shadow-sm focus:outline-none focus:border-neutral-500 focus:ring-neutral-500 focus:ring-1 sm:text-md"
                     placeholder="Conteúdo"
                   />

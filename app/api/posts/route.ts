@@ -34,12 +34,12 @@ export const POST = async (request: NextRequest) => {
 
 export const PUT = async (request: NextRequest) => {
   try {
-    const {serial, like} = await request.json();
-    console.log(serial, like)
+    const {serial, likes, dislikes} = await request.json();
     await prisma.blogPost.update({
       where: { serial: serial },
       data: {
-        likes: like
+        likes,
+        dislikes
       },
     });
     return NextResponse.json({ message: 'Deu certo' });
